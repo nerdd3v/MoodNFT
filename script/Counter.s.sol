@@ -21,8 +21,5 @@ contract CounterScript is Script {
         nft.mintToken(State.PENGUIN, ls);
 
         vm.stopBroadcast();
-
-        
-
     }
 }
