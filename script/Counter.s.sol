@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {MoodNFT} from "../src/Counter.sol";
+import {MoodNFT, State} from "../src/Counter.sol";
 
 contract CounterScript is Script {
     MoodNFT public nft;
@@ -14,11 +14,15 @@ contract CounterScript is Script {
 
         nft = new MoodNFT("n3rdCoin", "N3");
 
-        vm.stopBroadcast();
-
         string memory d = vm.readFile("./images/penguin.svg");
 
-        string memory ls = nft.getImageURI(bytes(d));
-        console.log(ls);
+        string memory ls = nft.getTokenURI(bytes(d));
+
+        nft.mintToken(State.PENGUIN, ls);
+
+        vm.stopBroadcast();
+
+        
+
     }
 }

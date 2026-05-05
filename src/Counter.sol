@@ -5,8 +5,8 @@ import {ERC721} from "../lib/openzeppelin-contracts/contracts/token/ERC721/ERC72
 import {Base64} from "../lib/openzeppelin-contracts/contracts/utils/Base64.sol";
 
 enum State{
-    HAPPY,
-    SAD
+    PENGUIN,
+    CAT
 }
 
 
@@ -19,25 +19,37 @@ contract MoodNFT is ERC721 {
         tokenId = 0;
     }
 
-    function mintToken(State s)public {
-        if(s == State.HAPPY){
-            idToURI[tokenId] = "s";
+    function mintToken(State s, string memory URI)public {
+        if(s == State.PENGUIN){
+            idToURI[tokenId] = URI;
         }
+        else if(s == State.CAT){
+            idToURI[tokenId] = URI;
+        }
+        else{
+            revert("Not a valid state");
+        }
+        _mint(msg.sender, tokenId);
+        tokenId++;
     }
 
     function _baseImageURI()internal pure returns(string memory){
         return "data:image/svg+xml;base64,";
     }
 
-    function getTokenURI(string memory svg)internal view returns(string memory){
-        abi.encodePacked('{"name": "', name(), '", "image"');
+    function getTokenURI(bytes memory svg)public view returns(string memory){
+        string memory json = Base64.encode(bytes(abi.encodePacked('{"name": "', name(), '", "image": "', getImageURI(svg), '"')));
+
+        return string(
+            abi.encodePacked("data:application/json;base64,",json)
+        );
     }
 
-    function createImageURI(bytes memory svg)public pure returns (string memory){
+    function createImageURI(bytes memory svg)internal pure returns (string memory){
         return Base64.encode((bytes(svg)));
     }
 
-    function getImageURI(bytes memory svg)public pure returns(string memory){
+    function getImageURI(bytes memory svg)internal pure returns(string memory){
         return string(abi.encodePacked(_baseImageURI(), createImageURI(svg)));
     }
 }
